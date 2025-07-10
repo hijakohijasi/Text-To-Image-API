@@ -1,8 +1,7 @@
 [variables]
 PYTHONPATH = "/app"
 
-[providers]
-python = "3.11"
+providers = ["python"]
 
 [phases.build]
 cmds = ["pip install Flask flask-limiter google-genai gunicorn werkzeug"]
