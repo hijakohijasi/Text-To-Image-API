@@ -165,7 +165,10 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <h6>cURL</h6>
+                                <h6>cURL GET</h6>
+                                <pre class="bg-dark text-light p-3 rounded"><code>curl "{{ request.url_root }}api/generate?prompt=A%20serene%20mountain%20landscape%20at%20sunset&style=realistic&size=medium"</code></pre>
+                                
+                                <h6>cURL POST</h6>
                                 <pre class="bg-dark text-light p-3 rounded"><code>curl -X POST \
   {{ request.url_root }}api/generate \
   -H "Content-Type: application/json" \
@@ -176,7 +179,23 @@
   }'</code></pre>
                             </div>
                             <div class="col-md-6">
-                                <h6>Python</h6>
+                                <h6>Python GET</h6>
+                                <pre class="bg-dark text-light p-3 rounded"><code>import requests
+
+response = requests.get(
+    "{{ request.url_root }}api/generate",
+    params={
+        "prompt": "A serene mountain landscape at sunset",
+        "style": "realistic",
+        "size": "medium"
+    }
+)
+
+data = response.json()
+if data.get("success"):
+    image_base64 = data["image"]</code></pre>
+
+                                <h6>Python POST</h6>
                                 <pre class="bg-dark text-light p-3 rounded"><code>import requests
 
 response = requests.post(

@@ -2,11 +2,81 @@
 
 ## Overview
 
-This is a production-ready Flask-based serverless API that generates images from text descriptions using Google's Gemini 2.0 Flash model. The application includes a beautiful web interface for testing the API and comprehensive documentation for developers. It's designed to be deployed on both Replit and Railway.com with zero configuration.
+This repository contains a Flask-based serverless API that generates images from text prompts using Google's Gemini 2.0 Flash model. The application provides a clean web interface for testing and offers REST API endpoints for programmatic access. It's designed to be deployable on both Replit and Railway platforms.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+
+## System Architecture
+
+### Backend Architecture
+- **Framework**: Flask (Python web framework)
+- **API Design**: RESTful API with both GET and POST support
+- **Rate Limiting**: Flask-Limiter for API abuse protection
+- **Proxy Support**: ProxyFix middleware for proper IP detection behind proxies
+- **Logging**: Built-in Python logging for debugging and monitoring
+
+### Frontend Architecture
+- **Template Engine**: Jinja2 (Flask's default templating)
+- **Styling**: Bootstrap with custom CSS for modern UI
+- **JavaScript**: Vanilla JavaScript for form handling and API interactions
+- **Real-time Features**: Character counting, loading states, and error handling
+
+### AI Integration
+- **Model**: Google Gemini 2.0 Flash for image generation
+- **Service Layer**: Dedicated `GeminiImageGenerator` class for AI operations
+- **Prompt Enhancement**: Automatic style and quality enhancement for better results
+
+## Key Components
+
+### Core Application Files
+- `app.py`: Main Flask application with route definitions and middleware setup
+- `gemini_service.py`: Service class handling Gemini AI integration
+- `main.py`: Application entry point for deployment
+
+### Frontend Components
+- `templates/index.html`: Main web interface with testing form
+- `static/script.js`: Client-side JavaScript for form handling
+- `static/style.css`: Custom styling for enhanced UI
+
+### Configuration Files
+- `railway.json`: Railway deployment configuration
+- `railway-requirements.txt`: Python dependencies for Railway deployment
+
+## Data Flow
+
+1. **User Request**: User submits text prompt via web interface or API endpoint
+2. **Validation**: Flask validates input parameters (prompt, style, size)
+3. **Rate Limiting**: Request checked against rate limits (5 per minute, 50 per hour, 200 per day)
+4. **Prompt Enhancement**: Service layer enhances prompt with style and quality indicators
+5. **AI Generation**: Gemini 2.0 Flash processes enhanced prompt and generates image
+6. **Response**: Base64-encoded image data returned to client
+7. **Display**: Web interface displays generated image or API returns JSON response
+
+## External Dependencies
+
+### AI Services
+- **Google Gemini API**: Core image generation service
+- **API Key**: Required environment variable `GEMINI_API_KEY`
+
+### Python Libraries
+- **Flask**: Web framework and routing
+- **flask-limiter**: Rate limiting functionality
+- **google-genai**: Official Google Gemini client library
+- **werkzeug**: WSGI utilities and proxy handling
+- **gunicorn**: WSGI HTTP server for production deployment
+
+### Frontend Dependencies
+- **Bootstrap**: UI framework via CDN
+- **Font Awesome**: Icons via CDN
+- **Custom CSS**: Enhanced styling for better user experience
+
+## Deployment Strategy
+
+### Multi-Platform Support
+- **Replit**: Direct Flask development and hosting
+- **Railway**: Production deployment with Nixpacks builder
 
 ## Recent Changes
 
@@ -16,114 +86,30 @@ Preferred communication style: Simple, everyday language.
 ✓ **2025-07-10**: Created dual deployment configuration for Replit and Railway
 ✓ **2025-07-10**: Added comprehensive API documentation and testing interface
 ✓ **2025-07-10**: Verified image generation functionality with authentic API calls
+✓ **2025-07-10**: Added GET method support for image generation API
+✓ **2025-07-10**: Created Railway deployment files (Procfile, railway-requirements.txt)
+✓ **2025-07-10**: Implemented auto port detection for multiple platforms
+✓ **2025-07-10**: Updated documentation with GET and POST examples
 
-## System Architecture
+## Current Status
 
-### Backend Architecture
-- **Framework**: Flask (Python web framework)
-- **API Design**: RESTful API with JSON responses
-- **Rate Limiting**: Flask-Limiter for API protection (200/day, 50/hour, 10/minute)
-- **Error Handling**: Centralized logging and error responses
-- **Proxy Support**: ProxyFix middleware for proper IP detection behind proxies
-
-### Frontend Architecture
-- **Template Engine**: Jinja2 (Flask's default)
-- **Styling**: Bootstrap with custom CSS
-- **JavaScript**: Vanilla JavaScript for form handling and API interactions
-- **UI Components**: Responsive design with Bootstrap cards and forms
-
-### AI Integration
-- **AI Service**: Google Gemini 2.0 Flash for image generation
-- **API Client**: Google GenAI Python client
-- **Image Processing**: Base64 encoding for image data transfer
-
-## Key Components
-
-### Core Application (app.py)
-- Flask application setup with security configurations
-- Rate limiting implementation with Flask-Limiter
-- Health check endpoint for monitoring
-- Complete API endpoint for image generation with validation
-- Error handling for all endpoints with proper HTTP status codes
-
-### AI Service Layer (gemini_service.py)
-- **GeminiImageGenerator**: Wrapper class for Gemini API
-- **Prompt Enhancement**: Automatic prompt optimization based on style and size parameters
-- **Error Handling**: Comprehensive error handling for API failures
-- **Configuration**: Environment-based API key management
-- **Connection Testing**: Built-in API connectivity verification
-
-### Web Interface
-- **Frontend**: HTML template with Bootstrap dark theme
-- **JavaScript**: Form validation, character counting, and API interaction
-- **Styling**: Custom CSS with gradient buttons and responsive design
-- **Sample Prompts**: Built-in inspiration generator for users
-
-### Static Assets
-- **CSS**: Custom styling with dark theme support and animations
-- **JavaScript**: Client-side form handling, API calls, and image download functionality
-
-## Data Flow
-
-1. **User Input**: User enters text prompt, selects style and size options
-2. **Frontend Validation**: JavaScript validates input length and required fields
-3. **API Request**: POST request to `/api/generate` endpoint
-4. **Rate Limiting**: Request passes through rate limiting middleware
-5. **Prompt Enhancement**: Service layer enhances prompt with style parameters
-6. **AI Generation**: Gemini 2.0 Flash generates image from enhanced prompt
-7. **Response Processing**: Image data encoded and returned as JSON
-8. **Frontend Display**: Generated image displayed in the web interface
-
-## External Dependencies
-
-### Core Dependencies
-- **Flask**: Web framework and routing
-- **Flask-Limiter**: Rate limiting functionality
-- **Google GenAI**: Official Google Gemini API client
-- **Werkzeug**: WSGI utilities and middleware
-
-### Frontend Dependencies
-- **Bootstrap**: CSS framework for responsive design
-- **Font Awesome**: Icon library for UI elements
-- **Custom CSS**: Application-specific styling
-
-### Environment Variables
-- **GEMINI_API_KEY**: Required for Google Gemini API access
-- **SESSION_SECRET**: Flask session security (optional, has default)
-
-## Deployment Strategy
-
-### Dual Platform Support
-- **Replit**: Zero-config deployment with built-in secrets management
-- **Railway**: Production-ready serverless deployment with automatic scaling
-- **Railway Config**: `railway.json` for deployment configuration
-- **Environment Detection**: Automatic port and configuration detection
-
-### Application Structure
-- **Entry Point**: `main.py` for direct execution
-- **WSGI Application**: `app.py` contains the Flask application
-- **Static Files**: Served through Flask's static file handling
-- **Templates**: Jinja2 templates for server-side rendering
+✅ **PRODUCTION READY**: The application is fully functional with both GET and POST API methods supported. All deployment files are configured for both Replit and Railway platforms. The API generates images successfully using Google Gemini 2.0 Flash with authentic API integration.
 
 ### Configuration Management
-- Environment variables for sensitive data (API keys)
-- Default values for development environment
-- Proxy-aware configuration for production deployments
-- Auto-detection of deployment platform (Replit vs Railway)
+- **Environment Variables**: API keys and secrets managed via platform-specific methods
+- **Rate Limiting**: In-memory storage for development, can be extended for production
+- **Logging**: Configurable logging levels for debugging and monitoring
 
-### Security Considerations
-- Rate limiting to prevent API abuse (5/min, 50/hour, 200/day)
-- Input validation and sanitization
-- Secure session management
-- API key protection through environment variables
-- ProxyFix middleware for proper IP detection
+### Production Considerations
+- **Gunicorn**: WSGI server for Railway deployment
+- **Restart Policy**: Automatic restart on failure with retry limits
+- **Port Binding**: Dynamic port allocation for cloud deployment
+- **Proxy Headers**: Proper handling of forwarded headers for IP detection
 
-### Monitoring and Health Checks
-- Health check endpoint at `/api/health`
-- Comprehensive logging throughout the application
-- Error tracking and response formatting
-- Real-time API status monitoring
-
-## Status
-
-✅ **PRODUCTION READY**: The application is fully implemented and tested with authentic Google Gemini API integration. Image generation functionality has been verified and all endpoints are working correctly. Ready for deployment on both Replit and Railway.
+### API Features
+- **Multiple Endpoints**: Health check, image generation, and style listing
+- **Multiple Methods**: Support for both GET and POST requests
+- **Error Handling**: Comprehensive error responses and logging
+- **Response Format**: Consistent JSON structure with metadata
+- **Size Options**: Small (512x512), Medium (1024x1024), Large (1536x1536)
+- **Style Options**: Realistic, Artistic, Cartoon, Digital Art, and 3D Render

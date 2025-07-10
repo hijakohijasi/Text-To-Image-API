@@ -46,19 +46,28 @@ def health_check():
         "version": "1.0.0"
     })
 
-@app.route('/api/generate', methods=['POST'])
+@app.route('/api/generate', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")
 def generate_image():
     """Generate an image from a text prompt"""
     try:
-        # Validate request
-        if not request.json:
-            return jsonify({
-                "error": "Invalid request format",
-                "message": "Request must contain JSON data"
-            }), 400
+        # Handle both GET and POST requests
+        if request.method == 'GET':
+            prompt = request.args.get('prompt', '').strip()
+            style = request.args.get('style', 'realistic')
+            size = request.args.get('size', 'medium')
+        else:
+            # POST method - validate JSON
+            if not request.json:
+                return jsonify({
+                    "error": "Invalid request format",
+                    "message": "Request must contain JSON data"
+                }), 400
+            
+            prompt = request.json.get('prompt', '').strip()
+            style = request.json.get('style', 'realistic')
+            size = request.json.get('size', 'medium')
         
-        prompt = request.json.get('prompt', '').strip()
         if not prompt:
             return jsonify({
                 "error": "Missing prompt",
@@ -70,10 +79,6 @@ def generate_image():
                 "error": "Prompt too long",
                 "message": "Prompt must be less than 1000 characters"
             }), 400
-        
-        # Optional parameters
-        style = request.json.get('style', 'realistic')
-        size = request.json.get('size', 'medium')
         
         logger.info(f"Generating image for prompt: {prompt[:50]}...")
         
@@ -155,12 +160,16 @@ def internal_error(e):
     }), 500
 
 if __name__ == '__main__':
-    # Handle different deployment environments
-    port = int(os.environ.get('PORT', 5000))  # Railway uses PORT
+    # Auto port detection for different deployment environments
+    port = int(os.environ.get('PORT', 5000))  # Railway and other services use PORT
     
-    # Replit typically uses port 8080, but we'll use environment-specific detection
+    # Replit detection
     if os.environ.get('REPL_ID'):  # Replit environment
         port = 8080
+    
+    # Heroku detection
+    if os.environ.get('DYNO'):  # Heroku environment
+        port = int(os.environ.get('PORT', 5000))
     
     logger.info(f"Starting Flask app on port {port}")
     app.run(host='0.0.0.0', port=port, debug=False)

@@ -13,10 +13,15 @@ A Flask-based serverless API that generates images from text prompts using Googl
 
 ## API Endpoints
 
-### `POST /api/generate`
-Generate an image from text prompt.
+### `GET|POST /api/generate`
+Generate an image from text prompt. Supports both GET and POST methods.
 
-**Request:**
+**GET Request:**
+```
+GET /api/generate?prompt=A%20serene%20mountain%20landscape%20at%20sunset&style=realistic&size=medium
+```
+
+**POST Request:**
 ```json
 {
   "prompt": "A serene mountain landscape at sunset",
@@ -70,7 +75,12 @@ Get available image sizes.
 
 1. Connect your GitHub repository to Railway
 2. Add `GEMINI_API_KEY` environment variable
-3. Deploy automatically with zero configuration
+3. Railway will automatically detect the `Procfile` and deploy
+
+**Files needed for Railway:**
+- `Procfile` (already included)
+- `railway-requirements.txt` (copy to `requirements.txt` on Railway)
+- Auto port detection via `PORT` environment variable
 
 Alternatively, use the Railway CLI:
 ```bash
@@ -78,6 +88,8 @@ railway login
 railway init
 railway up
 ```
+
+**Note:** Copy `railway-requirements.txt` to `requirements.txt` for Railway deployment.
 
 ## Local Development
 
@@ -106,11 +118,35 @@ python main.py
 
 ## Usage Example
 
+### GET Method
 ```python
 import requests
 import base64
 
-# Generate image
+# Generate image with GET
+response = requests.get(
+    "https://your-api-url.com/api/generate",
+    params={
+        "prompt": "A magical forest with glowing mushrooms",
+        "style": "artistic",
+        "size": "medium"
+    }
+)
+
+data = response.json()
+if data.get("success"):
+    # Decode base64 image
+    image_data = base64.b64decode(data["image"])
+    with open("generated_image.png", "wb") as f:
+        f.write(image_data)
+```
+
+### POST Method
+```python
+import requests
+import base64
+
+# Generate image with POST
 response = requests.post(
     "https://your-api-url.com/api/generate",
     json={
