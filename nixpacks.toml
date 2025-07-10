@@ -1,0 +1,11 @@
+[variables]
+PYTHONPATH = "/app"
+
+[providers]
+python = "3.11"
+
+[phases.build]
+cmds = ["pip install Flask flask-limiter google-genai gunicorn werkzeug"]
+
+[phases.start]
+cmd = "gunicorn --bind 0.0.0.0:$PORT --reuse-port main:app"

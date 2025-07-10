@@ -4,30 +4,22 @@ A Flask-based serverless API that generates images from text prompts using Googl
 
 ## Features
 
-- **AI-Powered Image Generation**: Uses Google Gemini 2.0 Flash for high-quality image generation
-- **Multiple Styles**: Realistic, Artistic, Cartoon, Digital Art, and 3D Render
-- **Multiple Sizes**: Small (512x512), Medium (1024x1024), Large (1536x1536)
+- **HD Quality Images**: All images generated in high definition automatically
+- **Multiple Aspect Ratios**: Square, landscape, portrait, and cinematic formats
+- **Various Styles**: Realistic, artistic, cartoon, digital art, and 3D render
+- **GET-Only API**: Simple URL-based requests for easy integration
 - **Rate Limiting**: Built-in protection against API abuse
 - **Web Interface**: Beautiful testing interface with real-time preview
 - **Dual Deployment**: Works on both Replit and Railway
 
 ## API Endpoints
 
-### `GET|POST /api/generate`
-Generate an image from text prompt. Supports both GET and POST methods.
+### `GET /api/generate`
+Generate an HD image from text prompt using GET method only.
 
-**GET Request:**
+**Request:**
 ```
-GET /api/generate?prompt=A%20serene%20mountain%20landscape%20at%20sunset&style=realistic&size=medium
-```
-
-**POST Request:**
-```json
-{
-  "prompt": "A serene mountain landscape at sunset",
-  "style": "realistic",
-  "size": "medium"
-}
+GET /api/generate?prompt=A%20serene%20mountain%20landscape%20at%20sunset&style=realistic&ratio=16:9
 ```
 
 **Response:**
@@ -37,7 +29,8 @@ GET /api/generate?prompt=A%20serene%20mountain%20landscape%20at%20sunset&style=r
   "image": "base64_encoded_image_data",
   "prompt": "A serene mountain landscape at sunset",
   "style": "realistic",
-  "size": "medium",
+  "ratio": "16:9",
+  "quality": "HD",
   "generated_at": 1752181804.6009817
 }
 ```
@@ -48,8 +41,8 @@ Health check endpoint.
 ### `GET /api/styles`
 Get available image styles.
 
-### `GET /api/sizes`
-Get available image sizes.
+### `GET /api/ratios`
+Get available aspect ratios and their descriptions.
 
 ## Rate Limits
 
@@ -118,18 +111,17 @@ python main.py
 
 ## Usage Example
 
-### GET Method
 ```python
 import requests
 import base64
 
-# Generate image with GET
+# Generate HD image with aspect ratio
 response = requests.get(
     "https://your-api-url.com/api/generate",
     params={
         "prompt": "A magical forest with glowing mushrooms",
         "style": "artistic",
-        "size": "medium"
+        "ratio": "16:9"  # Landscape HD format
     }
 )
 
@@ -139,30 +131,18 @@ if data.get("success"):
     image_data = base64.b64decode(data["image"])
     with open("generated_image.png", "wb") as f:
         f.write(image_data)
+    
+    print(f"Generated {data['quality']} quality image in {data['ratio']} aspect ratio")
 ```
 
-### POST Method
-```python
-import requests
-import base64
+## Supported Aspect Ratios
 
-# Generate image with POST
-response = requests.post(
-    "https://your-api-url.com/api/generate",
-    json={
-        "prompt": "A magical forest with glowing mushrooms",
-        "style": "artistic",
-        "size": "medium"
-    }
-)
-
-data = response.json()
-if data.get("success"):
-    # Decode base64 image
-    image_data = base64.b64decode(data["image"])
-    with open("generated_image.png", "wb") as f:
-        f.write(image_data)
-```
+- **1:1** - Square (1024x1024) - Perfect for Instagram posts
+- **16:9** - Landscape (1920x1080) - YouTube thumbnails, presentations  
+- **9:16** - Portrait (1080x1920) - Instagram stories, mobile wallpapers
+- **4:3** - Standard (1440x1080) - Classic photo format
+- **3:4** - Portrait Standard (1080x1440) - Print-ready portraits
+- **21:9** - Ultra Wide (2560x1080) - Cinematic, banner images
 
 ## License
 
