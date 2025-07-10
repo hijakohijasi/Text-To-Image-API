@@ -46,27 +46,15 @@ def health_check():
         "version": "1.0.0"
     })
 
-@app.route('/api/generate', methods=['GET', 'POST'])
+@app.route('/api/generate', methods=['GET'])
 @limiter.limit("5 per minute")
 def generate_image():
     """Generate an image from a text prompt"""
     try:
-        # Handle both GET and POST requests
-        if request.method == 'GET':
-            prompt = request.args.get('prompt', '').strip()
-            style = request.args.get('style', 'realistic')
-            size = request.args.get('size', 'medium')
-        else:
-            # POST method - validate JSON
-            if not request.json:
-                return jsonify({
-                    "error": "Invalid request format",
-                    "message": "Request must contain JSON data"
-                }), 400
-            
-            prompt = request.json.get('prompt', '').strip()
-            style = request.json.get('style', 'realistic')
-            size = request.json.get('size', 'medium')
+        # Handle GET requests only
+        prompt = request.args.get('prompt', '').strip()
+        style = request.args.get('style', 'realistic')
+        ratio = request.args.get('ratio', '1:1')  # Default to square
         
         if not prompt:
             return jsonify({
@@ -83,7 +71,7 @@ def generate_image():
         logger.info(f"Generating image for prompt: {prompt[:50]}...")
         
         # Generate image using Gemini
-        image_data = gemini_service.generate_image(prompt, style, size)
+        image_data = gemini_service.generate_image(prompt, style, ratio)
         
         if not image_data:
             return jsonify({
@@ -99,7 +87,8 @@ def generate_image():
             "image": image_base64,
             "prompt": prompt,
             "style": style,
-            "size": size,
+            "ratio": ratio,
+            "quality": "HD",
             "generated_at": time.time()
         })
         
@@ -123,14 +112,17 @@ def get_styles():
         ]
     })
 
-@app.route('/api/sizes')
-def get_sizes():
-    """Get available image sizes"""
+@app.route('/api/ratios')
+def get_ratios():
+    """Get available image aspect ratios"""
     return jsonify({
-        "sizes": [
-            {"id": "small", "name": "Small", "description": "512x512 pixels"},
-            {"id": "medium", "name": "Medium", "description": "1024x1024 pixels"},
-            {"id": "large", "name": "Large", "description": "1536x1536 pixels"}
+        "ratios": [
+            {"id": "1:1", "name": "Square", "description": "1024x1024 pixels (Instagram)"},
+            {"id": "16:9", "name": "Landscape", "description": "1920x1080 pixels (YouTube/TV)"},
+            {"id": "9:16", "name": "Portrait", "description": "1080x1920 pixels (Phone/Stories)"},
+            {"id": "4:3", "name": "Standard", "description": "1440x1080 pixels (Classic)"},
+            {"id": "3:4", "name": "Portrait Standard", "description": "1080x1440 pixels (Print)"},
+            {"id": "21:9", "name": "Ultra Wide", "description": "2560x1080 pixels (Cinematic)"}
         ]
     })
 

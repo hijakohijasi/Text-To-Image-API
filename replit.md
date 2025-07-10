@@ -90,10 +90,14 @@ Preferred communication style: Simple, everyday language.
 ✓ **2025-07-10**: Created Railway deployment files (Procfile, railway-requirements.txt)
 ✓ **2025-07-10**: Implemented auto port detection for multiple platforms
 ✓ **2025-07-10**: Updated documentation with GET and POST examples
+✓ **2025-07-10**: Modified API to use GET method only with aspect ratio support
+✓ **2025-07-10**: Added screen ratio options (1:1, 16:9, 9:16, 4:3, 3:4, 21:9)
+✓ **2025-07-10**: Implemented HD quality image generation as default
+✓ **2025-07-10**: Updated frontend interface to use new ratio parameter
 
 ## Current Status
 
-✅ **PRODUCTION READY**: The application is fully functional with both GET and POST API methods supported. All deployment files are configured for both Replit and Railway platforms. The API generates images successfully using Google Gemini 2.0 Flash with authentic API integration.
+✅ **PRODUCTION READY**: The application is fully functional with GET-only API method. All deployment files are configured for both Replit and Railway platforms. The API generates HD quality images with multiple aspect ratio options using Google Gemini 2.0 Flash with authentic API integration.
 
 ### Configuration Management
 - **Environment Variables**: API keys and secrets managed via platform-specific methods
@@ -107,9 +111,10 @@ Preferred communication style: Simple, everyday language.
 - **Proxy Headers**: Proper handling of forwarded headers for IP detection
 
 ### API Features
-- **Multiple Endpoints**: Health check, image generation, and style listing
-- **Multiple Methods**: Support for both GET and POST requests
+- **Multiple Endpoints**: Health check, image generation, style listing, and ratio listing
+- **GET Method Only**: Simplified API with URL parameter support
 - **Error Handling**: Comprehensive error responses and logging
 - **Response Format**: Consistent JSON structure with metadata
-- **Size Options**: Small (512x512), Medium (1024x1024), Large (1536x1536)
+- **HD Quality**: All images generated in high definition quality
+- **Aspect Ratio Options**: Square (1:1), Landscape (16:9), Portrait (9:16), Standard (4:3), Portrait Standard (3:4), Ultra Wide (21:9)
 - **Style Options**: Realistic, Artistic, Cartoon, Digital Art, and 3D Render

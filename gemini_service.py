@@ -19,21 +19,21 @@ class GeminiImageGenerator:
         self.client = genai.Client(api_key=api_key)
         logger.info("Gemini client initialized successfully")
     
-    def generate_image(self, prompt: str, style: str = "realistic", size: str = "medium") -> bytes:
+    def generate_image(self, prompt: str, style: str = "realistic", ratio: str = "1:1") -> bytes:
         """
-        Generate an image from a text prompt using Gemini 2.0 Flash
+        Generate an HD image from a text prompt using Gemini 2.0 Flash
         
         Args:
             prompt: Text description of the image to generate
             style: Style of the image (realistic, artistic, cartoon, etc.)
-            size: Size of the image (small, medium, large)
+            ratio: Aspect ratio of the image (1:1, 16:9, 9:16, etc.)
             
         Returns:
-            bytes: Generated image data
+            bytes: Generated HD image data
         """
         try:
             # Enhance prompt with style and quality indicators
-            enhanced_prompt = self._enhance_prompt(prompt, style, size)
+            enhanced_prompt = self._enhance_prompt(prompt, style, ratio)
             
             logger.info(f"Generating image with enhanced prompt: {enhanced_prompt[:100]}...")
             
@@ -73,30 +73,33 @@ class GeminiImageGenerator:
             logger.error(f"Error generating image: {str(e)}")
             raise Exception(f"Failed to generate image: {str(e)}")
     
-    def _enhance_prompt(self, prompt: str, style: str, size: str) -> str:
+    def _enhance_prompt(self, prompt: str, style: str, ratio: str) -> str:
         """
-        Enhance the user prompt with style and quality indicators
+        Enhance the user prompt with style and HD quality indicators
         
         Args:
             prompt: Original user prompt
             style: Desired style
-            size: Desired size
+            ratio: Desired aspect ratio
             
         Returns:
             str: Enhanced prompt
         """
         style_modifiers = {
-            "realistic": "photorealistic, high quality, detailed, professional photography",
-            "artistic": "artistic, creative, expressive, painterly style",
-            "cartoon": "cartoon style, animated, colorful, fun",
-            "digital_art": "digital art, concept art, detailed, vibrant colors",
-            "3d": "3D rendered, high quality 3D art, detailed modeling"
+            "realistic": "photorealistic, ultra high quality, detailed, professional photography, HD",
+            "artistic": "artistic, creative, expressive, painterly style, high definition",
+            "cartoon": "cartoon style, animated, colorful, fun, HD quality",
+            "digital_art": "digital art, concept art, detailed, vibrant colors, HD",
+            "3d": "3D rendered, ultra high quality 3D art, detailed modeling, HD"
         }
         
-        size_modifiers = {
-            "small": "square format",
-            "medium": "high resolution, square format",
-            "large": "ultra high resolution, detailed, square format"
+        ratio_modifiers = {
+            "1:1": "square format, 1024x1024 resolution",
+            "16:9": "widescreen landscape format, 1920x1080 resolution",
+            "9:16": "vertical portrait format, 1080x1920 resolution", 
+            "4:3": "standard format, 1440x1080 resolution",
+            "3:4": "portrait format, 1080x1440 resolution",
+            "21:9": "ultra wide cinematic format, 2560x1080 resolution"
         }
         
         # Build enhanced prompt
@@ -106,12 +109,12 @@ class GeminiImageGenerator:
         if style in style_modifiers:
             enhanced += f", {style_modifiers[style]}"
         
-        # Add size modifier
-        if size in size_modifiers:
-            enhanced += f", {size_modifiers[size]}"
+        # Add ratio modifier
+        if ratio in ratio_modifiers:
+            enhanced += f", {ratio_modifiers[ratio]}"
         
-        # Add general quality modifiers
-        enhanced += ", high quality, well composed, clear details"
+        # Add HD quality modifiers
+        enhanced += ", ultra high definition, crystal clear, sharp details, professional quality, HD"
         
         return enhanced
     

@@ -58,11 +58,14 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="size" class="form-label">Size</label>
-                                    <select class="form-select" id="size">
-                                        <option value="small">Small (512x512)</option>
-                                        <option value="medium" selected>Medium (1024x1024)</option>
-                                        <option value="large">Large (1536x1536)</option>
+                                    <label for="ratio" class="form-label">Aspect Ratio (HD Quality)</label>
+                                    <select class="form-select" id="ratio">
+                                        <option value="1:1" selected>Square (1024x1024)</option>
+                                        <option value="16:9">Landscape (1920x1080)</option>
+                                        <option value="9:16">Portrait (1080x1920)</option>
+                                        <option value="4:3">Standard (1440x1080)</option>
+                                        <option value="3:4">Portrait Standard (1080x1440)</option>
+                                        <option value="21:9">Ultra Wide (2560x1080)</option>
                                     </select>
                                 </div>
                             </div>
@@ -120,7 +123,7 @@
                                 <h5>Endpoints</h5>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
-                                        <code>POST /api/generate</code>
+                                        <code>GET /api/generate</code>
                                         <div class="small text-muted">Generate image from text</div>
                                     </li>
                                     <li class="list-group-item">
@@ -132,8 +135,8 @@
                                         <div class="small text-muted">Available styles</div>
                                     </li>
                                     <li class="list-group-item">
-                                        <code>GET /api/sizes</code>
-                                        <div class="small text-muted">Available sizes</div>
+                                        <code>GET /api/ratios</code>
+                                        <div class="small text-muted">Available aspect ratios</div>
                                     </li>
                                 </ul>
                             </div>
@@ -145,9 +148,9 @@
                                     <li><i class="fas fa-calendar text-warning"></i> 200 requests per day</li>
                                 </ul>
                                 
-                                <h5 class="mt-4">Response Format</h5>
+                                <h5 class="mt-4">Image Quality</h5>
                                 <p class="small text-muted">
-                                    Images are returned as base64-encoded strings in JSON format.
+                                    All images are generated in HD quality with various aspect ratios. Images are returned as base64-encoded strings in JSON format.
                                 </p>
                             </div>
                         </div>
@@ -166,20 +169,10 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h6>cURL GET</h6>
-                                <pre class="bg-dark text-light p-3 rounded"><code>curl "{{ request.url_root }}api/generate?prompt=A%20serene%20mountain%20landscape%20at%20sunset&style=realistic&size=medium"</code></pre>
-                                
-                                <h6>cURL POST</h6>
-                                <pre class="bg-dark text-light p-3 rounded"><code>curl -X POST \
-  {{ request.url_root }}api/generate \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "A serene mountain landscape at sunset",
-    "style": "realistic",
-    "size": "medium"
-  }'</code></pre>
+                                <pre class="bg-dark text-light p-3 rounded"><code>curl "{{ request.url_root }}api/generate?prompt=A%20serene%20mountain%20landscape%20at%20sunset&style=realistic&ratio=16:9"</code></pre>
                             </div>
                             <div class="col-md-6">
-                                <h6>Python GET</h6>
+                                <h6>Python</h6>
                                 <pre class="bg-dark text-light p-3 rounded"><code>import requests
 
 response = requests.get(
@@ -187,29 +180,14 @@ response = requests.get(
     params={
         "prompt": "A serene mountain landscape at sunset",
         "style": "realistic",
-        "size": "medium"
+        "ratio": "16:9"
     }
 )
 
 data = response.json()
 if data.get("success"):
-    image_base64 = data["image"]</code></pre>
-
-                                <h6>Python POST</h6>
-                                <pre class="bg-dark text-light p-3 rounded"><code>import requests
-
-response = requests.post(
-    "{{ request.url_root }}api/generate",
-    json={
-        "prompt": "A serene mountain landscape at sunset",
-        "style": "realistic",
-        "size": "medium"
-    }
-)
-
-data = response.json()
-if data.get("success"):
-    image_base64 = data["image"]</code></pre>
+    image_base64 = data["image"]
+    quality = data["quality"]  # Always "HD"</code></pre>
                             </div>
                         </div>
                     </div>

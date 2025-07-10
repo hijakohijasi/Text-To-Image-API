@@ -39,7 +39,7 @@ async function handleGenerate(event) {
     
     const prompt = document.getElementById('prompt').value.trim();
     const style = document.getElementById('style').value;
-    const size = document.getElementById('size').value;
+    const ratio = document.getElementById('ratio').value;
     
     if (!prompt) {
         showError('Please enter a prompt for image generation.');
@@ -55,17 +55,13 @@ async function handleGenerate(event) {
     showLoading();
     
     try {
-        const response = await fetch('/api/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                prompt: prompt,
-                style: style,
-                size: size
-            })
+        const params = new URLSearchParams({
+            prompt: prompt,
+            style: style,
+            ratio: ratio
         });
+        
+        const response = await fetch(`/api/generate?${params}`);
         
         const data = await response.json();
         
